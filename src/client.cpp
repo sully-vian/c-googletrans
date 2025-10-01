@@ -62,9 +62,13 @@ std::optional<Translated> Translator::translate(const std::string& text,
         build_params("webapp", text, src, dest, token);
     std::string url = urls::TRANSLATE(pick_service_url());
 
-    cpr::Response response =
-        cpr::Get(cpr::Url{url}, cpr::Parameters(params.begin(), params.end()),
-                 cpr::Header{{"User-Agent", user_agent}});
+    cpr::Parameters cpr_params;
+    for (const auto& kv : params) {
+        cpr_params.Add({kv.first, kv.second});
+    }
+
+    cpr::Response response = cpr::Get(cpr::Url{url}, cpr_params,
+                                      cpr::Header{{"User-Agent", user_agent}});
 
     if (response.status_code != cpr::status::HTTP_OK) {
         if (raise_exception) {
@@ -108,4 +112,51 @@ std::optional<Translated> Translator::translate(const std::string& text,
     auto extra_data = std::nullopt;
 
     return Translated(src_lang, dest, text, translated, pron, extra_data);
+}
+
+std::optional<Detected> Translator::detect(const std::string& text) {
+    auto token = token_acquirer->do_token(text);
+    auto params = build_params("webapp", text, "auto", "en", token);
+    std::string url = urls::TRANSLATE(pick_service_url());
+
+    cpr::Parameters cpr_params;
+    for (const auto& kv : params) {
+        cpr_params.Add({kv.first, kv.second});
+    }
+
+    cpr::Response response = cpr::Get(cpr::Url{url}, cpr_params,
+                                      cpr::Header{{"User-Agent", user_agent}});
+
+    if (response.status_code != cpr::status::HTTP_OK) {
+        if (raise_exception) {
+            throw std::runtime_error("Unexpected status code:" +
+                                     std::to_string(response.status_code));
+        }
+        return std::nullopt;
+    }
+
+    nlohmann::json data;
+    try {
+        data = nlohmann::json::parse(response.text);
+    } catch (...) {
+        if (raise_exception) {
+            throw;
+        }
+        return std::nullopt;
+    }
+
+    std::string lang;
+    float confidence = 0.0f;
+    try {
+        if (data[8][0].size() > 1) {
+            lang = data[8][0].get<std::string>();
+            confidence = data[8][-2].get<float>();
+        } else {
+            lang = data[8][0].get<std::string>();
+            confidence = data[8][-2][0].get<float>();
+        }
+    } catch (...) {
+    }
+
+    return Detected(lang, confidence);
 }

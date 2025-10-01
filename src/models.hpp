@@ -6,17 +6,19 @@
 #include <string>
 class Translated {
    public:
-    std::string src;
-    std::string dest;
-    std::string origin;
-    std::string text;
-    std::string pronunciation;
-    std::optional<std::map<std::string, std::string>> extra_data;
+    const std::string src;
+    const std::string dest;
+    const std::string origin;
+    const std::string text;
+    const std::string pronunciation;
+    const std::optional<const std::map<const std::string, const std::string>>
+        extra_data;
 
-    Translated(std::string& src, std::string& dest, std::string& origin,
-               std::string& text, std::string& pronunciation,
-               std::optional<std::map<std::string, std::string>> extra_data =
-                   std::nullopt)
+    Translated(const std::string& src, const std::string& dest,
+               const std::string& origin, const std::string& text,
+               const std::string& pronunciation,
+               std::optional<std::map<const std::string, const std::string>>
+                   extra_data = std::nullopt)
         : src(src),
           dest(dest),
           origin(origin),

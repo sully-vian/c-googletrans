@@ -21,12 +21,7 @@ class Translator {
                                         const std::string& dest = "en",
                                         const std::string& src = "auto");
 
-    std::optional<Translated> translate(const std::vector<std::string>& texts,
-                                        const std::string& dest = "en",
-                                        const std::string& src = "auto");
-
     std::optional<Detected> detect(const std::string& text);
-    std::vector<Detected> detect(const std::vector<std::string>& text);
 
    private:
     std::vector<std::string> service_urls;

@@ -1,24 +1,23 @@
 CC=clang++ -fcolor-diagnostics
 CFLAGS=-Wall -Wextra -O2 -std=c++17 $(shell pkg-config --cflags cpr) -Iinclude
-LDFLAGS=$(shell pkg-config --libs cpr)
+LDFLAGS=$(shell pkg-config --libs cpr libssl libcrypto)
 
-SRC = src/utils.cpp
+SRC = src/main.cpp src/client.cpp src/gtoken.cpp src/utils.cpp
 TESTS = tests/test_utils.cpp
 
 .PHONY: all test clean
 
-all: libutils.a
+all: main
 
-libutils.a: $(SRC)
-	$(CC) $(CFLAGS) -c $(SRC) -o src/utils.o
-	ar rcs libutils.a src/utils.o
+main: $(SRC)
+	$(CC) $(CFLAGS) $(SRC) $(LDFLAGS) -o main
 
 get_token: src/get_token.cpp src/gtoken.cpp libutils.a
 	$(CC) $(CFLAGS) src/get_token.cpp src/gtoken.cpp libutils.a $(LDFLAGS) -o get_token
 
 test: $(SRC) $(TESTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SRC) $(TESTS) -o test_utils
+	$(CC) $(CFLAGS) $(SRC) $(TESTS) $(LDFLAGS) -o test_utils
 	./test_utils
 
 clean:
-	rm -f src/*.o test_utils libutils.a get_token
+	rm -f src/*.o test_utils client

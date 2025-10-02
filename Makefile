@@ -12,12 +12,9 @@ all: main
 main: $(SRC)
 	$(CC) $(CFLAGS) $(SRC) $(LDFLAGS) -o main
 
-get_token: src/get_token.cpp src/gtoken.cpp libutils.a
-	$(CC) $(CFLAGS) src/get_token.cpp src/gtoken.cpp libutils.a $(LDFLAGS) -o get_token
-
 test: $(SRC) $(TESTS)
 	$(CC) $(CFLAGS) $(SRC) $(TESTS) $(LDFLAGS) -o test_utils
 	./test_utils
 
 clean:
-	rm -f src/*.o test_utils client
+	rm -f src/*.o test_utils main

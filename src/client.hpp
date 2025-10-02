@@ -1,6 +1,8 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
+#include <cpr/parameters.h>
+
 #include <memory>
 #include <optional>
 #include <string>
@@ -30,11 +32,11 @@ class Translator {
     std::unique_ptr<TokenAcquirer> token_acquirer;
 
     std::string pick_service_url();
-    std::map<std::string, std::string> build_params(const std::string& client,
-                                                    const std::string& query,
-                                                    const std::string& src,
-                                                    const std::string& dest,
-                                                    const std::string& token);
+    cpr::Parameters build_params(const std::string& client,
+                                 const std::string& query,
+                                 const std::string& src,
+                                 const std::string& dest,
+                                 const std::string& token);
 };
 
 #endif  // CLIENT_HPP

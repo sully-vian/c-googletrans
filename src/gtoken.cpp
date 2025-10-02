@@ -32,10 +32,17 @@ int TokenAcquirer::update() {
             }
         }
     }
-
+    host = "https://translate.google.com";
+    std::cout << "get with host:" + host << std::endl;
     cpr::Response response =
         cpr::Get(cpr::Url{host},
                  cpr::Header{{"User-Agent", constants::DEFAULT_USER_AGENT}});
+
+    if (response.status_code != cpr::status::HTTP_OK) {
+        throw std::runtime_error("Unexpected status code in gtoken.cpp:" +
+                                 std::to_string(response.status_code));
+        return 2;
+    }
 
     if (response.error) {
         std::cerr << "CPR error: " << response.error.message << std::endl;

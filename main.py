@@ -14,7 +14,7 @@ async def main():
     async with httpx.AsyncClient(http2=True) as client:
         acquirer = TokenAcquirer(client=client)
         token = await acquirer.do(text)
-        print(f"Acquired token: {token}")
+        print(f"Token:{token}")
 
     async with Translator() as translator:
         result = await translator.translate(text, dest="fr")
